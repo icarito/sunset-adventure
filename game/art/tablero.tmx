@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="80" height="80" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="generic_background" tilewidth="32" tileheight="32">
+  <image source="tiles/generic_background.png" trans="808080" width="864" height="832"/>
+ </tileset>
+ <tileset firstgid="703" name="town_buildings" tilewidth="32" tileheight="32">
+  <image source="tiles/town_buildings.png" trans="808080" width="672" height="768"/>
+ </tileset>
+ <tileset firstgid="1207" name="small_objects" tilewidth="32" tileheight="32">
+  <image source="tiles/small_objects.png" trans="808080" width="671" height="512"/>
+ </tileset>
+ <tileset firstgid="1527" name="bldgright" tilewidth="32" tileheight="32">
+  <image source="tiles/bldgright.png" trans="808080" width="864" height="128"/>
+ </tileset>
+ <tileset firstgid="1635" name="bldgleft" tilewidth="32" tileheight="32">
+  <image source="tiles/bldgleft.png" trans="808080" width="704" height="128"/>
+ </tileset>
+ <tileset firstgid="1723" name="trimoto4" tilewidth="32" tileheight="32">
+  <image source="trimoto4.png" width="64" height="64"/>
+ </tileset>
+ <layer name="Fondo" width="80" height="80">
+  <data encoding="base64" compression="zlib">
+   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
+  </data>
+ </layer>
+ <layer name="Capa de patrones 2" width="80" height="80">
+  <data encoding="base64" compression="zlib">
+   eJzt27ENwjAURdGfIkAFM5BsCCzCHuyBYA6ogB34hQsKpERykUQ6R3qNK+s2rhwBALA8tybi3kx9i+V6ZLunfgCjbduIXTv1LebvlXuXfX7Ou2zX6zdolW/zumxT3ulDdjvmTvoN+teP8fbZrCvr9QMAAAAAAAAAAAAAgEU5+wtQ5aJfFf3q6Ffnqh8AAAAAAAAz8wVJzQ0c
+  </data>
+ </layer>
+ <layer name="Capa de patrones 3" width="80" height="80">
+  <data encoding="base64" compression="zlib">
+   eJzt1D1OAlEAhdEHCEtA9qBCJ60/0GitwCKA3oI1ULgGChZBRemivITQATFqgoZzki+TmerlZvJKAThv00Yp69r+qo1Tn+7vm2SjVbZqpsvUqm3fN1Xsd9THxfY5y05X2es63aR26qQ3+33Je3a6y1736SE9pl6a2++o3f+3zE4v2es1DdIwjdLCfj92Wy+lWz/1Kf6vp2z3bD/gDI1z9/Xdf9+22W98YL9D3wEAAAAAAAAAAAAAAAAAAAAAAAAAfsMnhKcUlw==
+  </data>
+ </layer>
+ <layer name="Capa de patrones 4" width="80" height="80">
+  <data encoding="base64" compression="zlib">
+   eJzt0DkKgEAQRNEOxvsn3sctM3W7jg1eQRhH3oOfFxUBAO/quyegbWvtAT8zlIgxm7I5W0rtRW3Z8q89O7Izu/wHAAAAAAAAAAAAAAAAAAAAAAAAAADAh9y2pQoT
+  </data>
+ </layer>
+</map>
