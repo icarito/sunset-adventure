@@ -36,7 +36,7 @@ from gummworld2 import data, State
 
 
 pygame.init()
-hud_font = pygame.font.Font(data.filepath('font', '/usr/share/fonts/TTF/Vera.ttf'), 10)
+hud_font = pygame.font.Font(data.filepath('font', 'Vera.ttf'), 10)
 hud_alpha = 208
 text_color = Color('yellow')
 
