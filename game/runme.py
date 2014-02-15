@@ -32,7 +32,7 @@ import pygame
 from pygame.locals import *
 import gradients
 pygame.init()
-screen = pygame.display.set_mode((640,480))
+screen = pygame.display.set_mode((800,600))
 screen_rect = screen.get_rect()
 sp = list(screen_rect.center)
 ep = [screen_rect.centerx,0]
@@ -49,7 +49,6 @@ for distance in sizes:
     pygame.image.save(screen, file)
 """
 
-
 import pygame
 from pygame.sprite import Sprite
 from pygame.locals import *
@@ -62,15 +61,13 @@ from sprite_strip_anim import SpriteStripAnim
 
 class Avatar(geometry.CircleGeometry):
     def __init__(self, map_pos, screen_pos):
-        geometry.CircleGeometry.__init__(self, map_pos, 16)
+        geometry.CircleGeometry.__init__(self, map_pos, 24)
         self.image = pygame.surface.Surface((64,64))
-        #self.image = pygame.image.load("art/trimoto4.png")
-        #pygame.draw.circle(self.image, Color('yellow'), (16,16), 4)
-        self.image.set_colorkey(Color('black'))
-        self.screen_position = screen_pos - 5
+        self.screen_position = screen_pos - 32
+        self.face = 2
 
     def load_sheet(self):
-        FPS = 120
+        FPS = 200
         frames = FPS / 12
         self.strips = [
             SpriteStripAnim('art/alicia.png', (0,0,64,64), 8, 1, True, frames),
@@ -79,21 +76,32 @@ class Avatar(geometry.CircleGeometry):
             SpriteStripAnim('art/alicia.png', (0,196,64,64), 8, 1, True, frames),
             ]
 
+    def up(self):
+        self.face=0
+    def down(self):
+        self.face=2
+    def right(self):
+        self.face=3
+    def left(self):
+        self.face=1
+
     def next(self):
-        self.image = self.strips[2].next()
+        self.image = self.strips[self.face].next()
+        self.image.set_colorkey(Color('black'))
+        #pygame.draw.circle(self.image, Color('yellow'), (32,32), 16)
         return self.image
 
 class App(Engine):
 
-    def __init__(self, resolution=(640,480)):
+    def __init__(self, resolution=(800,600)):
 
-        caption = 'Sunset Adventure (a.k.a. Ecolusion)'
+        caption = 'Sunset Adventure (a.k.a. Ecollusion)'
         resolution = Vec2d(resolution)
 
         Engine.__init__(self,
             caption=caption,
             camera_target=Avatar((176,280), resolution//2),
-            resolution=resolution, display_flags=FULLSCREEN,
+            resolution=resolution, #display_flags=FULLSCREEN,
             frame_speed=0)
 
         ## Sprites need to be loaded after display is initialized
@@ -104,10 +112,10 @@ class App(Engine):
         ## Map scrolls 1.0X on x-axis, 0.5X on y-axis. See on_key_down() for the
         ## application of these values. The net visual effect is that the map
         ## scrolls slower along the y-axis than the x-axis.
-        self.aspect = Vec2d(1.0, 0.5)
+        self.aspect = Vec2d(1.0, 0.8)
         ## application of these values. The net visual effect is that the map
         ## scrolls slower along the y-axis than the x-axis.
-        self.aspect = Vec2d(1.0, 0.5)
+        self.aspect = Vec2d(1.0, 0.8)
 
         self.map = TiledMap('art/tablero.tmx')
         self.world = SpatialHash(self.map.rect, 32)
@@ -276,6 +284,27 @@ class App(Engine):
     def draw_avatar(self):
         camera = State.camera
         avatar = camera.target
+        #print "going to " + str(self.move_to)
+        #print "still at " + str(avatar.position)
+        if self.move_to:
+            move_x, move_y = self.move_to - avatar.position
+            if abs(move_x) > abs(move_y):
+                move_y=0
+            elif abs(move_x) < abs(move_y):
+                move_x=0
+        else:
+            move_x = self.move_x
+            move_y = self.move_y
+
+        if move_x > 0:
+            avatar.right()
+        elif move_x < 0:
+            avatar.left()
+        elif move_y > 0:
+            avatar.down()
+        elif move_y < 0:
+            avatar.up()
+
         avatar.next()
         camera.surface.blit(avatar.image, avatar.screen_position)
 
@@ -320,5 +349,5 @@ class App(Engine):
 
 
 if __name__ == '__main__':
-    app = App(resolution=(1366,768))
+    app = App()
     gummworld2.run(app)
