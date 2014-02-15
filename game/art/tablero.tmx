@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="80" height="80" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="generic_background" tilewidth="32" tileheight="32">
-  <image source="tiles/generic_background.png" trans="808080" width="864" height="832"/>
+  <image source="tiles/generic_background.png" width="864" height="832"/>
  </tileset>
  <tileset firstgid="703" name="town_buildings" tilewidth="32" tileheight="32">
-  <image source="tiles/town_buildings.png" trans="808080" width="672" height="768"/>
+  <image source="tiles/town_buildings.png" width="672" height="768"/>
  </tileset>
  <tileset firstgid="1207" name="small_objects" tilewidth="32" tileheight="32">
-  <image source="tiles/small_objects.png" trans="808080" width="671" height="512"/>
+  <image source="tiles/small_objects.png" width="671" height="512"/>
  </tileset>
  <tileset firstgid="1527" name="bldgright" tilewidth="32" tileheight="32">
-  <image source="tiles/bldgright.png" trans="808080" width="864" height="128"/>
+  <image source="tiles/bldgright.png" width="864" height="128"/>
  </tileset>
  <tileset firstgid="1635" name="bldgleft" tilewidth="32" tileheight="32">
-  <image source="tiles/bldgleft.png" trans="808080" width="704" height="128"/>
+  <image source="tiles/bldgleft.png" width="704" height="128"/>
  </tileset>
  <tileset firstgid="1723" name="trimoto4" tilewidth="32" tileheight="32">
   <image source="trimoto4.png" width="64" height="64"/>
@@ -25,7 +25,7 @@
  </layer>
  <layer name="Capa de patrones 2" width="80" height="80">
   <data encoding="base64" compression="zlib">
-   eJzt27ENwjAURdGfIkAFM5BsCCzCHuyBYA6ogB34hQsKpERykUQ6R3qNK+s2rhwBALA8tybi3kx9i+V6ZLunfgCjbduIXTv1LebvlXuXfX7Ou2zX6zdolW/zumxT3ulDdjvmTvoN+teP8fbZrCvr9QMAAAAAAAAAAAAAgEU5+wtQ5aJfFf3q6Ffnqh8AAAAAAAAz8wVJzQ0c
+   eJzt2zsKwkAUhtFJYbTSNZjsUN2I+3AHPlrRdWil7sFbTGEhRBghCZwDf5Pq8jVTJSUAgPG5VCldq76vGK9btLvr93f7OqVD3fcV43WMdif9GKj5JKXFpO8rhu8Re+a9Pr430a7Vr1Mdb/M0b5bf6VV0W8c2+nX61o/fLaNZk9fqBwAAAAAAAAAAAAAAo7L1L0CRnX5F9CujX5mzfgAAAAAAAAzMG8zqECY=
   </data>
  </layer>
  <layer name="Capa de patrones 3" width="80" height="80">
