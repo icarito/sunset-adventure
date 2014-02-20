@@ -67,7 +67,7 @@ class Avatar(geometry.CircleGeometry):
         self.face = 2
 
     def load_sheet(self):
-        FPS = 200
+        FPS = 400
         frames = FPS / 12
         self.strips = [
             SpriteStripAnim('art/alicia.png', (0,0,64,64), 8, 1, True, frames),
@@ -98,11 +98,18 @@ class App(Engine):
         caption = 'Sunset Adventure (a.k.a. Ecollusion)'
         resolution = Vec2d(resolution)
 
+        ## Load Tiled TMX map, then update the world's dimensions.
+        self.map = TiledMap('art/tablero.tmx')
+
         Engine.__init__(self,
             caption=caption,
             camera_target=Avatar((176,280), resolution//2),
             resolution=resolution, #display_flags=FULLSCREEN,
+            map=self.map,
             frame_speed=0)
+
+        self.world = SpatialHash(self.map.rect, 32)
+        self.set_state()
 
         ## Sprites need to be loaded after display is initialized
         camera = State.camera
@@ -117,12 +124,8 @@ class App(Engine):
         ## scrolls slower along the y-axis than the x-axis.
         self.aspect = Vec2d(1.0, 0.8)
 
-        self.map = TiledMap('art/tablero.tmx')
-        self.world = SpatialHash(self.map.rect, 32)
-        self.set_state()
-
         #entities,tilesheets = toolkit.load_entities(
-        #    data.filepath('map', 'mini2.entities'))
+        #    data.filepath('map', 'tablero.entities'))
         #for e in entities:
         #    self.world.add(e)
 
@@ -141,6 +144,12 @@ class App(Engine):
         self.faux_avatar = Avatar(self.camera.target.position, 0)
 
         State.speed = 10
+
+
+        ## Create the renderer.
+        self.renderer = BasicMapRenderer(
+            self.map, max_scroll_speed=State.speed)
+
 
         self.fog = None
         self.fog_rect = None
@@ -173,6 +182,9 @@ class App(Engine):
             self.update_mouse_movement(pygame.mouse.get_pos())
         self.update_camera_position()
         State.camera.update()
+        ## Set render's rect.
+        self.renderer.set_rect(center=State.camera.rect.center)
+        State.hud.update(dt)
 
     def update_mouse_movement(self, pos):
         # Angle of movement.
@@ -274,7 +286,13 @@ class App(Engine):
         """overrides Engine.draw"""
         # Draw stuff.
         State.screen.clear()
-        toolkit.draw_tiles()
+        ## Renderer draws tiles.
+        self.renderer.draw_tiles()
+        if State.show_grid:
+            toolkit.draw_grid(self.grid_cache)
+        if State.show_labels:
+            toolkit.draw_labels(self.label_cache)
+        State.hud.draw()
         self.draw_avatar()
         #self.draw_fog()
         State.hud.draw()
