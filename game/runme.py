@@ -89,7 +89,6 @@ class Avatar(geometry.CircleGeometry):
     def next(self, time_passed=0):
         self.time_since_last_frame += time_passed
         if self.time_since_last_frame > 1.0/self.anim_fps:
-            print self.time_since_last_frame
             self.image = self.strips[self.face].next()
             self.image.set_colorkey(Color('black'))
             self.time_since_last_frame = 0

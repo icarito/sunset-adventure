@@ -111,7 +111,7 @@ class TiledMapHandler(MapHandler):
     
     # 4 gives better FPS at resolution 320x320, but can cause loading hiccups
     # 2 gives smoothest loading, highest cache hits
-    collapse_level = (4,4)
+    collapse_level = (2,2)
     
     def load(self):
         self.map = TiledMap(
