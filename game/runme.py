@@ -61,12 +61,13 @@ from sprite_strip_anim import SpriteStripAnim
 
 class Avatar(geometry.CircleGeometry):
     def __init__(self, map_pos, screen_pos):
-        geometry.CircleGeometry.__init__(self, map_pos, 24)
+        geometry.CircleGeometry.__init__(self, map_pos, 10)
         self.image = pygame.surface.Surface((64,64))
         self.screen_position = screen_pos - 32
         self.face = 2
 
     def load_sheet(self):
+        self.screen_position += (0, -22)
         FPS = 400
         frames = FPS / 12
         self.strips = [
@@ -88,7 +89,7 @@ class Avatar(geometry.CircleGeometry):
     def next(self):
         self.image = self.strips[self.face].next()
         self.image.set_colorkey(Color('black'))
-        #pygame.draw.circle(self.image, Color('yellow'), (32,32), 16)
+        #pygame.draw.circle(self.image, Color('yellow'), (32,32+22), 10)
         return self.image
 
 class App(Engine):
@@ -99,11 +100,11 @@ class App(Engine):
         resolution = Vec2d(resolution)
 
         ## Load Tiled TMX map, then update the world's dimensions.
-        self.map = TiledMap('art/tablero.tmx')
+        self.map = TiledMap(data.filepath('map', 'tablero.tmx'))
 
         Engine.__init__(self,
             caption=caption,
-            camera_target=Avatar((176,280), resolution//2),
+            camera_target=Avatar((176,380), resolution//2),
             resolution=resolution, #display_flags=FULLSCREEN,
             map=self.map,
             frame_speed=0)
@@ -124,10 +125,10 @@ class App(Engine):
         ## scrolls slower along the y-axis than the x-axis.
         self.aspect = Vec2d(1.0, 0.8)
 
-        #entities,tilesheets = toolkit.load_entities(
-        #    data.filepath('map', 'tablero.entities'))
-        #for e in entities:
-        #    self.world.add(e)
+        entities,tilesheets = toolkit.load_entities(
+            data.filepath('map', 'tablero.entities'))
+        for e in entities:
+            self.world.add(e)
 
         # Create a speed box for converting mouse position to destination
         # and scroll speed. 800x600 has aspect ratio 8:6.
@@ -205,6 +206,14 @@ class App(Engine):
         """Step the camera's position if self.move_to contains a value.
         Handle collisions.
         """
+        # Check world collisions.
+        world = State.world
+        camera_target = State.camera.target
+        dummy = self.faux_avatar
+        def can_step(step):
+            dummy.position = step
+            return not world.collideany(dummy)
+
         if self.move_to is not None:
             # Current position.
             camera = State.camera
@@ -226,13 +235,6 @@ class App(Engine):
                 angle = geometry.angle_of((wx,wy), self.move_to)
                 newx,newy = geometry.point_on_circumference((wx,wy), speed, angle)
 
-            # Check world collisions.
-            world = State.world
-            camera_target = camera.target
-            dummy = self.faux_avatar
-            def can_step(step):
-                dummy.position = step
-                return not world.collideany(dummy)
             # Remove camera target so it's not a factor in collisions.
             move_ok = can_step((newx,newy))
             # We hit something. Try side-stepping.
@@ -273,13 +275,22 @@ class App(Engine):
                 elif newy > rect.bottom:
                     newy = rect.bottom
                 camera.position = newx,newy
+
+        # In case of keyboard movement
         if self.move_y or self.move_x:
             camera = State.camera
+            cur_x,cur_y = camera.position
             wx,wy = camera.position + (self.move_x,self.move_y)
             rect = State.world.rect
             wx = max(min(wx,rect.right), rect.left)
             wy = max(min(wy,rect.bottom), rect.top)
-            camera.position = wx,wy
+
+            if can_step((wx,wy)):
+                camera.position = wx,wy
+            elif can_step((cur_x, wy)):
+                camera.position = cur_x,wy
+            elif can_step((wx, cur_y)):
+                camera.position = wx,cur_y
             self.move_to = None
 
     def draw(self, interp):
@@ -305,8 +316,8 @@ class App(Engine):
     def draw_avatar(self):
         camera = State.camera
         avatar = camera.target
-        #print "going to " + str(self.move_to)
-        #print "still at " + str(avatar.position)
+
+        #determine movement vector from target position
         if self.move_to:
             move_x, move_y = self.move_to - avatar.position
             if abs(move_x) > abs(move_y):
@@ -340,28 +351,36 @@ class App(Engine):
     def on_mouse_button_up(self, pos, button):
         self.mouse_down = False
 
+    def process_arrows(self):
+        pressed_keys = pygame.key.get_pressed()
+
+        if pressed_keys[K_DOWN]:
+            self.move_y = 1 * State.speed * self.aspect.y
+        if pressed_keys[K_UP]:
+            self.move_y = -1 * State.speed * self.aspect.y
+        if pressed_keys[K_RIGHT]:
+            self.move_x = 1 * State.speed * self.aspect.x
+        if pressed_keys[K_LEFT]:
+            self.move_x = -1 * State.speed * self.aspect.x
+
+        # Turn off key-presses.
+        if not (pressed_keys[K_DOWN] or pressed_keys[K_UP]):
+            self.move_y = 0
+        if not (pressed_keys[K_LEFT] or pressed_keys[K_RIGHT]):
+            self.move_x = 0
+
     def on_key_down(self, unicode, key, mod):
         # Turn on key-presses.
         ## Factor X and Y aspect into speed.
-        if key == K_DOWN:
-            self.move_y = 1 * State.speed * self.aspect.y
-        elif key == K_UP:
-            self.move_y = -1 * State.speed * self.aspect.y
-        elif key == K_RIGHT:
-            self.move_x = 1 * State.speed * self.aspect.x
-        elif key == K_LEFT:
-            self.move_x = -1 * State.speed * self.aspect.x
+
+        self.process_arrows()
         if key == K_SPACE:
             self.fogn = self.set_fog(self.fogn+1)
         elif key == K_ESCAPE:
             context.pop()
 
     def on_key_up(self, key, mod):
-        # Turn off key-presses.
-        if key in (K_DOWN,K_UP):
-            self.move_y = 0
-        elif key in (K_RIGHT,K_LEFT):
-            self.move_x = 0
+        self.process_arrows()
 
     def on_quit(self):
         context.pop()

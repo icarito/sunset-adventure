@@ -27,7 +27,7 @@ __doc__ = """world_editor.py - A world editor for Gummworld2.
 ## Configurables                                                          ##
 ##                                                                        ##
 
-SCREEN_SIZE = (1300,750)
+SCREEN_SIZE = (1310,745)
 #SCREEN_SIZE = (800,600)
 
 ##                                                                        ##

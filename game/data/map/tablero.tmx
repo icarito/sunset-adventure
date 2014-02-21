@@ -16,7 +16,7 @@
   <image source="tiles/bldgleft.png" width="704" height="128"/>
  </tileset>
  <tileset firstgid="1723" name="trimoto4" tilewidth="32" tileheight="32">
-  <image source="trimoto4.png" width="64" height="64"/>
+  <image source="tiles/trimoto4.png" width="64" height="64"/>
  </tileset>
  <layer name="Fondo" width="80" height="80">
   <data encoding="base64" compression="zlib">
