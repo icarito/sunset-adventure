@@ -173,7 +173,7 @@ class App(Engine):
         toolkit.make_hud(caption)
         self.clock.schedule_interval(State.hud.update, 1.0)
 
-        pygame.mixer.music.load("art/music/11 - ckotty - Game Loop 11.mp3")
+        pygame.mixer.music.load("art/music/11 - ckotty - Game Loop 11.ogg")
         pygame.mixer.music.play(-1)
 
     def update(self, dt):
