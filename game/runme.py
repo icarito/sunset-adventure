@@ -65,16 +65,16 @@ class Avatar(geometry.CircleGeometry):
         self.image = pygame.surface.Surface((64,64))
         self.screen_position = screen_pos - 32
         self.face = 2
+        self.anim_fps = 0.8
+        self.time_since_last_frame = 0
 
     def load_sheet(self):
         self.screen_position += (0, -22)
-        FPS = 400
-        frames = FPS / 12
         self.strips = [
-            SpriteStripAnim('art/alicia.png', (0,0,64,64), 8, 1, True, frames),
-            SpriteStripAnim('art/alicia.png', (0,64,64,64), 8, 1, True, frames),
-            SpriteStripAnim('art/alicia.png', (0,128,64,64), 8, 1, True, frames),
-            SpriteStripAnim('art/alicia.png', (0,196,64,64), 8, 1, True, frames),
+            SpriteStripAnim('art/alicia.png', (0,0,64,64), 8, 1, True),
+            SpriteStripAnim('art/alicia.png', (0,64,64,64), 8, 1, True),
+            SpriteStripAnim('art/alicia.png', (0,128,64,64), 8, 1, True),
+            SpriteStripAnim('art/alicia.png', (0,196,64,64), 8, 1, True),
             ]
 
     def up(self):
@@ -86,9 +86,13 @@ class Avatar(geometry.CircleGeometry):
     def left(self):
         self.face=1
 
-    def next(self):
-        self.image = self.strips[self.face].next()
-        self.image.set_colorkey(Color('black'))
+    def next(self, time_passed=0):
+        self.time_since_last_frame += time_passed
+        if self.time_since_last_frame > 1.0/self.anim_fps:
+            print self.time_since_last_frame
+            self.image = self.strips[self.face].next()
+            self.image.set_colorkey(Color('black'))
+            self.time_since_last_frame = 0
         #pygame.draw.circle(self.image, Color('yellow'), (32,32+22), 10)
         return self.image
 
@@ -116,6 +120,7 @@ class App(Engine):
         camera = State.camera
         avatar = camera.target
         avatar.load_sheet()
+        avatar.next()
 
         ## Map scrolls 1.0X on x-axis, 0.5X on y-axis. See on_key_down() for the
         ## application of these values. The net visual effect is that the map
@@ -143,8 +148,10 @@ class App(Engine):
         self.mouse_down = False
         self.side_steps = []
         self.faux_avatar = Avatar(self.camera.target.position, 0)
+        self.time_passed = 0
+        self.pyg_clock = pygame.time.Clock()
 
-        State.speed = 10
+        State.speed = 5
 
 
         ## Create the renderer.
@@ -183,6 +190,7 @@ class App(Engine):
             self.update_mouse_movement(pygame.mouse.get_pos())
         self.update_camera_position()
         State.camera.update()
+        self.time_passed = self.pyg_clock.tick()/1000.0  #seconds passed this frame
         ## Set render's rect.
         self.renderer.set_rect(center=State.camera.rect.center)
         State.hud.update(dt)
@@ -337,7 +345,7 @@ class App(Engine):
         elif move_y < 0:
             avatar.up()
 
-        avatar.next()
+        avatar.next(self.time_passed)
         camera.surface.blit(avatar.image, avatar.screen_position)
 
     def set_fog(self, n):
